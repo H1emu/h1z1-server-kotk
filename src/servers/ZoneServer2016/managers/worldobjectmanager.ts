@@ -58,6 +58,7 @@ import { ZoneClient2016 } from "../classes/zoneclient";
 import { TaskProp } from "../entities/taskprop";
 import { Crate } from "../entities/crate";
 import { Destroyable } from "../entities/destroyable";
+import { Character2016 } from "../entities/character";
 const debug = require("debug")("ZoneServer");
 
 function getRandomSkin(itemDefinitionId: number) {
@@ -329,11 +330,30 @@ export class WorldObjectManager {
       lootbag = new Lootbag(
         characterId,
         server.getTransientId(characterId),
-        isCharacter ? 9581 : 9391,
-        new Float32Array([pos[0], pos[1] + 0.1, pos[2]]),
-        new Float32Array([0, 0, 0, 0]),
+        isCharacter ? entity.actorModelId/*9581*/ : 9391,
+        isCharacter ? entity.state.position : new Float32Array([pos[0], pos[1] + 0.1, pos[2]]),
+        isCharacter ? entity.state.rotation : new Float32Array([0, 0, 0, 0]),
         server
       );
+    
+    if(isCharacter) {
+      lootbag.useSimpleStruct = false;
+      lootbag._equipment = entity._equipment;
+      //Object.values(character._equipment).forEach((slot) => {
+      //  body._equipment[slot.slotId] = slot;
+      //});
+      lootbag.flags.knockedOut = 1;
+      lootbag.flags.noCollide = 0;
+      lootbag.OnFullCharacterDataRequest = (server: ZoneServer2016, client: ZoneClient2016)=> {
+        server.sendData(
+          client,
+          "Equipment.SetCharacterEquipment",
+          lootbag.pGetEquipment()
+        );
+      }
+    }
+    
+
     const container = lootbag.getContainer();
     if (container) {
       container.items = items;

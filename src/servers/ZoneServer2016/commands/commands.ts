@@ -2238,6 +2238,17 @@ export const commands: Array<Command> = [
       client.character.isSpectator = !client.character.isSpectator;
     },
   },
+  {
+    name: "body",
+    permissionLevel: PermissionLevels.DEFAULT,
+    execute: async (
+      server: ZoneServer2016,
+      client: Client,
+      args: Array<string>
+    ) => {
+      //server.worldObjectManager.createPlayerBody(server, client.character);
+    },
+  },
   //#endregion
 
   //#region DEV PERMISSIONS
