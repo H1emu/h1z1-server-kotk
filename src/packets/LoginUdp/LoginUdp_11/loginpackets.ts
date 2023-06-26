@@ -53,6 +53,7 @@ export const applicationDataJS2016 = [
   }
 ];
 
+// use this for kotk
 export const applicationDataKOTK = [
   {
     name: "unknownByte1",
